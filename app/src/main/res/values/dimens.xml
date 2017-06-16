@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margins">8dp</dimen>
+    <dimen name="marginsL">16dp</dimen>
+    <dimen name="buttonsSmall">40dp</dimen>
+</resources>
