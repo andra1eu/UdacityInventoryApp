@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.andra.udacityinventoryapp.data.DatabaseWrapper;
 import com.example.andra.udacityinventoryapp.data.PatisserieModel;
@@ -90,6 +91,22 @@ public class AddProductActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void savedProduct(View view){
+        if (uriPath == null){
+            Toast.makeText(this, "Please add an image!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (productNameView.getText().toString().isEmpty()){
+            Toast.makeText(this, "Please write a name!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (quantity == 0){
+            Toast.makeText(this, "Please add the quantity!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (productPriceView.getText().toString().isEmpty()){
+            Toast.makeText(this, "Please write the price!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         DatabaseWrapper wrapper = new DatabaseWrapper(this);
         PatisserieModel model = new PatisserieModel(0, uriPath, productNameView.getText().toString(),
                 quantity, Integer.parseInt(productPriceView.getText().toString()));

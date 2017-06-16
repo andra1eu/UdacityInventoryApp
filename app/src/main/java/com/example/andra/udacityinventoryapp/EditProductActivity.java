@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +24,6 @@ import static com.example.andra.udacityinventoryapp.MainActivity.PRODUCT_ID_EXTR
 public class EditProductActivity extends AppCompatActivity implements View.OnClickListener {
     private int PICK_IMAGE_REQUEST = 1;
     private Uri uri;
-    private Button save;
     private Button add;
     private Button minus;
     private ImageView productImageView;
@@ -33,7 +34,7 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
     private String finalProductName;
     private int finalProductPrice;
     private String uriPath;
-
+    int id;
     private int quantity;
 
     @SuppressLint("SetTextI18n")
@@ -43,11 +44,11 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_edit_product);
 
         Intent i = getIntent();
-        int id = i.getIntExtra(PRODUCT_ID_EXTRA, 0);
+        id = i.getIntExtra(PRODUCT_ID_EXTRA, 0);
 
         DatabaseWrapper wrapper = new DatabaseWrapper(this);
         model = wrapper.getProduct(id);
-        if (model == null){
+        if (model == null) {
             finish();
             return;
         }
@@ -63,12 +64,28 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
         quantity = model.getProductQuantity();
         productPriceView.setText(model.getProductPrice() + "");
 
-        save = (Button) findViewById(R.id.save_product);
         add = (Button) findViewById(R.id.add_button);
         minus = (Button) findViewById(R.id.minus_button);
         add.setOnClickListener(this);
         minus.setOnClickListener(this);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.product_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.save:
+                savedProduct();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void onImageClick(View v) {
@@ -83,7 +100,7 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && intent != null && intent.getData() != null) {
             uri = intent.getData();
-             uriPath = getRealPathFromURI(uri);
+            uriPath = getRealPathFromURI(uri);
             productImageView.setImageURI(uri);
         }
     }
@@ -116,7 +133,7 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
         productQuantityView.setText(String.valueOf(quantity));
     }
 
-    public void savedProduct(View view) {
+    public void savedProduct() {
         finalProductName = productNameView.getText().toString();
         finalProductPrice = Integer.parseInt(productPriceView.getText().toString());
 
@@ -129,4 +146,32 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
         wrapper.updateProduct(model);
         finish();
     }
+
+    public void deleteProduct(View view) {
+        int productId = id;
+        DatabaseWrapper wrapper = new DatabaseWrapper(this);
+        wrapper.deleteProduct(productId);
+        finish();
+    }
+
+    public void orderProduct(View view) {
+        String emailProductName = model.getProductName();
+        int emailProductQuantityInt = model.getProductQuantity();
+        String emailProductQuantity = emailProductQuantityInt + "";
+        int emailProductPriceInt = model.getProductPrice();
+        String emailProductPrice = emailProductPriceInt + "";
+        String message = "Product Name: " + emailProductName + "\n" +
+                        "Product Quantity: " + emailProductQuantity + "\n" +
+                        "Product Price: " + emailProductPrice + " $";
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto: andralung@gmail.com"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Order");
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+
 }

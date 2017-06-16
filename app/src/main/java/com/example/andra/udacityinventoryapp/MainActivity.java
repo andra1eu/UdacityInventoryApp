@@ -4,10 +4,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
-import android.support.annotation.RequiresPermission;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -15,7 +15,9 @@ import android.widget.ListView;
 import com.example.andra.udacityinventoryapp.data.DatabaseWrapper;
 import com.example.andra.udacityinventoryapp.data.PatisserieCursorAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PatisserieCursorAdapter.OnSaleListener{
+
+    public static final String TAG = "MainActivity";
     public static final String PRODUCT_ID_EXTRA = "id";
 
     ListView listView;
@@ -47,22 +49,13 @@ public class MainActivity extends AppCompatActivity {
 
         wrapper = new DatabaseWrapper(this);
         Cursor cursor = wrapper.getCursorWithAllData();
-        adapter = new PatisserieCursorAdapter(this, cursor);
+        adapter = new PatisserieCursorAdapter(this, cursor, this);
         listView.setAdapter(adapter);
-
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                int productId = (int) view.getTag();
-                wrapper.deleteProduct(productId);
-                adapter.changeCursor(wrapper.getCursorWithAllData());
-                return true;
-            }
-        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "onItemClick() called with: parent = [" + parent + "], view = [" + view + "], position = [" + position + "], id = [" + id + "]");
                 int productId = (int) view.getTag();
                 Intent i = new Intent(MainActivity.this, EditProductActivity.class);
                 i.putExtra(PRODUCT_ID_EXTRA, productId);
@@ -74,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        adapter.changeCursor(wrapper.getCursorWithAllData());
+    }
+
+    @Override
+    public void onSale(int productId, int newQuantity) {
+        wrapper.decrementQuantity(productId, newQuantity);
         adapter.changeCursor(wrapper.getCursorWithAllData());
     }
 }

@@ -77,6 +77,14 @@ public class DatabaseWrapper {
         db.insert(TABLE_NAME, null, values);
     }
 
+    public void decrementQuantity(int productId, int newQuantity) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PRODUCT_QUANTITY, newQuantity);
+        String whereClause = _ID + "=?";
+        String[] whereArgs = new String[]{productId + ""};
+        db.update(TABLE_NAME, values, whereClause, whereArgs);
+    }
+
     private class PatisserieDbHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "patisserie.db";
