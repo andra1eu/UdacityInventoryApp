@@ -41,7 +41,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/product_image"
-            tools:text="Croissant" />
+            tools:text="@string/croissant" />
 
         <TextView
             android:id="@+id/textView"
@@ -51,7 +51,7 @@
             android:layout_marginLeft="@dimen/marginsL"
             android:layout_marginTop="@dimen/margins"
             android:text="@string/quantity"
-            android:textSize="@dimen/marginsL"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/add_button"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/add_button"
@@ -65,7 +65,7 @@
             android:layout_marginLeft="@dimen/marginsL"
             android:layout_marginTop="@dimen/margins"
             android:text="@string/price"
-            android:textSize="@dimen/marginsL"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
@@ -119,7 +119,7 @@
             android:layout_marginRight="@dimen/margins"
             android:layout_marginTop="0dp"
             android:inputType="numberDecimal"
-            android:textSize="@dimen/marginsL"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView2"
             app:layout_constraintHorizontal_bias="0.347"
             app:layout_constraintLeft_toRightOf="@+id/textView2"

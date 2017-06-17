@@ -1,10 +1,13 @@
 package com.example.andra.udacityinventoryapp;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -35,6 +38,7 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
     private int finalProductPrice;
     private String uriPath;
     int id;
+    DatabaseWrapper wrapper;
     private int quantity;
 
     @SuppressLint("SetTextI18n")
@@ -45,8 +49,7 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
 
         Intent i = getIntent();
         id = i.getIntExtra(PRODUCT_ID_EXTRA, 0);
-
-        DatabaseWrapper wrapper = new DatabaseWrapper(this);
+        wrapper = new DatabaseWrapper(this);
         model = wrapper.getProduct(id);
         if (model == null) {
             finish();
@@ -148,10 +151,28 @@ public class EditProductActivity extends AppCompatActivity implements View.OnCli
     }
 
     public void deleteProduct(View view) {
-        int productId = id;
-        DatabaseWrapper wrapper = new DatabaseWrapper(this);
-        wrapper.deleteProduct(productId);
-        finish();
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle("Delete product")
+                .setMessage("Are you sure you want to delete this product?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        int productId = id;
+                        wrapper.deleteProduct(productId);
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     public void orderProduct(View view) {
